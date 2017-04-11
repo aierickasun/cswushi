@@ -6,7 +6,7 @@
 #
 
 server: server.c Makefile
-	gcc -O0 -std=c11 -Wall -Werror -o server server.c -lm
+	gcc -O0 -std=c11 -Wall -Werror -o server helpers.c server.c -lm
 
 clean:
 	rm -f *.o core server

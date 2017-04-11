@@ -23,6 +23,7 @@
 #include <arpa/inet.h>
 #include <dirent.h>
 #include <errno.h>
+#include "helpers.h"
 #include <limits.h>
 #include <math.h>
 #include <signal.h>
@@ -620,7 +621,27 @@ bool load(FILE* file, BYTE** content, size_t* length)
 const char* lookup(const char* path)
 {
     // TODO
-    return NULL;
+    char *s = malloc(sizeof(char)*LimitRequestFields);
+    if(s == NULL) return NULL;
+    strcpy(s, path);
+    toLower(s);
+    int i = 0;
+    while(s[i]!='.' && s[i]!='\0' && s[i]!= '\n'){
+        removeChar(s, i);
+        i++;
+    }
+    
+    if(strcmp(s, ".css")==0) strcpy(s, "text/css");
+    else if(strcmp(s, ".html")==0)  strcpy(s, "text/html");
+    else if(strcmp(s, ".gif")==0)  strcpy(s, "image/gif");
+    else if(strcmp(s, ".ico")==0)  strcpy(s, "image/x-icon");
+    else if(strcmp(s, "jpg")==0)  strcpy(s, "image/jpeg");
+    else if(strcmp(s, ".js")==0)  strcpy(s, "text/javascript");
+    else if(strcmp(s, ".php")==0)  strcpy(s, "text/x-php");
+    else if(strcmp(s, ".png")==0)  strcpy(s, "image/png");
+    else s =  NULL;
+
+    return s;
 }
 
 /**
