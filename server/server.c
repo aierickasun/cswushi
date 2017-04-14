@@ -620,7 +620,7 @@ bool load(FILE* file, BYTE** content, size_t* length)
  */
 const char* lookup(const char* path)
 {
-    // TODO
+    // strlen(path)
     char *s = malloc(sizeof(char)*LimitRequestFields);
     if(s == NULL) return NULL;
     strcpy(s, path);
@@ -652,6 +652,107 @@ const char* lookup(const char* path)
 bool parse(const char* line, char* abs_path, char* query)
 {
     // TODO
+//respond(int code, headers, body, length)
+    char *s = malloc(strlen(line)*sizeof(char)+1);
+    strcpy(s, line);
+    char *subS = malloc(sizeof(char)*10);//arbitrary number >3
+    int i = 0;
+//until first space, get method
+    while(s[i]!=' ' && i < 10){
+//and store it into subS
+    	subS[i] = s[i];
+	i++;
+
+    }
+    i++;
+    toLower(subS);
+
+	if(strstr(subS, "get")==NULL){
+	    const char* head = "Content-Type: text/html\r\n";
+	    const char* body = "<head><title>Error 405: Method Not Allowed</title></head><body>Get that weak shit outta here</body>";
+	    respond(405, head, body, strlen(head)+strlen(body)+2);
+	    free(subS);
+	    free(s);
+	    return false;
+	}
+//if not start with '/', return
+    if(s[i]!='/'){
+	const char* head = "Content-Type: text/html\r\n";
+        const char* body = "<head><title>Error 501: Not Implemented</title></head><body>Get that weak shit outta here</body>";
+	respond(501, head, body, strlen(head)+strlen(body)+2);	
+	free(subS);
+        free(s);
+	return false;
+    }
+//read until questionmark, get abs_path
+    free(subS);
+    subS = malloc(sizeof(char)*strlen(s));
+    p = 0;
+    while(s[i]!=' ' && s[i]!='?'){
+	if(s[i] == '"'){
+            const char* head = "Content-Type: text/html\r\n";
+            const char* body = "<head><title>Error 400: Bad Request</title></head><body>Get that weak shit outta here</body>";
+	    respond(400, head,body, strlen(head)+strlen(body)+2);
+	    free(subS);
+            free(s);
+	    return false;
+        }
+        subS[p] = s[i];
+	p++;
+	i++;
+    }
+    strcpy(abs_path, subS);
+//Try get query
+    free(subS);
+    subS = malloc(sizeof(char)*strlen(s));
+    p = 0;
+    int saveQ = i;
+    i++;
+//read until it reaches a space
+    while(s[i]!=' ' && s[saveQ]=='?'){
+    	if(s[i] == '"'){
+            const char* head = "Content-Type: text/html\r\n";
+            const char* body = "<head><title>Error 400: Bad Request</title></head><body>Get that weak shit outta here</body>";
+            respond(400, head,body, strlen(head)+strlen(body)+2);
+            free(subS);
+            free(s);
+
+	    return false;
+        }
+        subS[p] = s[i];
+    	p++;
+    	i++;
+    }
+    if(saveQ == i-1) strcpy(query, '\0');
+    
+       strcpy(query,subS);
+    i++;
+    free(subS);
+    subS = malloc(sizeof(char)*strlen(s));
+    p = 0;
+//Read the rest and check http version
+    while(s[i]!='\0' && strlen(s)>i){
+	subS[p] = s[i];
+	p++;
+	i++;
+    }
+    if(strstr(subS, "HTTP/1.1")!=NULL){
+	free(subS);
+	free(s);
+	return true;
+    } else{
+        const char* head = "Content-Type: text/html\r\n";
+        const char* body = "<head><title>Error 505: HTTP Version Not Yet Supported</title></head><body>Get that weak shit outta here</body>";
+        respond(505, head,body, strlen(head)+strlen(body)+2);
+
+
+        free(subS);
+        free(s);
+        return false;
+    }
+    
+    free(subS);
+    free(s);
     error(501);
     return false;
 }

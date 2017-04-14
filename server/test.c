@@ -3,15 +3,10 @@
 #include <string.h>
 
 int main(int argc, char *argv[]){
-	char *poo = "Sup my nigga";
-	char *ric;//  = malloc(sizeof(char)*26);
-	ric = "supmynigga";
+	 char *poo = "Supmyfriend";
+	 char *	ric = "supmypigga";
 	char *string = malloc(sizeof(char)*26);
-	char eric[30] = "Sup my nigga";
-//char *string = "supmynigga";
-	//char *pissoff = malloc(sizeof(char)*26);
-	//pissoff[2] = 'h';
-	//strcpy(pissoff, ric);
+	char eric[30] = "Sup my friend";
 	strcpy(string, ric);
 	printf("%s,%s, %c \n", poo, ric, poo[0]);
         int i = 0;
@@ -30,6 +25,9 @@ printf("------------------\nUsing arrays\n");
 printf("%s\n", eric);
 strcpy(eric, ric);
 printf("%s\n", eric);
+printf("\n\n%c,\n %c,\n %c,\n", poo[poo], poo[ric], poo[ric+poo+1]);
+
+
 
 return 0;
 
